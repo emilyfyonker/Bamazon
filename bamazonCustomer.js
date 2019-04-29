@@ -46,10 +46,10 @@ function queryAllItems() {
 }
 
 function askProductId() {
-    {
+    
         inquirer
           .prompt([{
-            name: "ID",
+            name: "id",
             type: "input",
             message: "What is the ID of the product you're looking for?",
             filter: Number
@@ -62,19 +62,22 @@ function askProductId() {
           },
         ]).then(function(answers){
             var quantityNeeded = answers.Quantity;
-            var IDrequested = answers.productId;
+            var IDrequested = answers.id;
             order(IDrequested, quantityNeeded);
         });
-    }}
-    function order(ID, quantityNeeded){
-        connection.query('SELECT * FROM products WHERE id = ' + ID, function(err, res) {
+    }
+    function order(id, quantityNeeded){
+        connection.query('SELECT * FROM products WHERE id = ' + id, function(err, res) {
             if (err){console.log(err)};
-            if(quantityNeeded <= res[i].price * quantityNeeded){
-                var cost = res[i].price * quantityNeeded;
+            if(quantityNeeded <= res[0].stock_quantity){
+                var cost = res[0].price * quantityNeeded;
                 console.log("Your order is in stock")
-            }
+            }else{
+              console.log("Insufficient quantity!")
+            };
+            queryAllItems();
         }
         )
     }
 
-    queryAllItems()
+    queryAllItems();
