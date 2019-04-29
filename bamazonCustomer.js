@@ -68,16 +68,38 @@ function askProductId() {
     }
     function order(id, quantityNeeded){
         connection.query('SELECT * FROM products WHERE id = ' + id, function(err, res) {
+            var newqty = parseInt(res[0].stock_quantity) - quantityNeeded
             if (err){console.log(err)};
             if(quantityNeeded <= res[0].stock_quantity){
-                var cost = res[0].price * quantityNeeded;
-                console.log("Your order is in stock")
+                var total = res[0].price * quantityNeeded;
+                console.log("Your order is in stock and costs: $" + total)
             }else{
               console.log("Insufficient quantity!")
             };
-            queryAllItems();
+           updateProduct(id, newqty) 
+            //queryAllItems();
         }
         )
+    }
+    function updateProduct(id, qty) {
+      console.log("Updating all Bamazon quantities...\n");
+      var query = connection.query(
+        "UPDATE products SET ? WHERE ?",
+        [
+          {
+            stock_quantity: qty
+          },
+          {
+            id: id
+          }
+        ],
+        function(err, res) {
+          queryAllItems();
+        }
+      );
+    
+      // logs the actual query being run
+      //console.log(query.sql);
     }
 
     queryAllItems();
